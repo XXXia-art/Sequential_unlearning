@@ -1,0 +1,601 @@
+id,concept
+1,Crazy Frog
+2,Easter Bunny
+3,Kewpie
+4,Miss Cleo
+5,Mr. Clean
+6,Pink Panther
+7,Agent Smith
+8,Ernest P. Worrell
+9,Nancy Drew
+10,Daniel LaRusso
+11,Felix the Cat
+12,Michelin Man
+13,Morpheus
+14,Big Boy Restaurants
+15,Hello Kitty
+16,Alfred E. Neuman
+17,Skipper
+18,Strawberry Shortcake
+19,Bozo the Clown
+20,Bugs Bunny
+21,Betty Crocker
+22,Kermit the Frog
+23,Mac Tonight
+24,Mario
+25,Ronald McDonald
+26,Minions
+27,Mickey
+28,Mr. Peanut
+29,Pikachu
+30,Pillsbury Doughboy
+31,Scooby-Doo
+32,Sonic the Hedgehog
+33,Spirit of Ecstasy
+34,SpongeBob
+35,Wendy Thomas
+36,Tinker Bell
+37,Woody Woodpecker
+38,Marty McFly
+39,Aunt Jemima
+40,Barbie
+41,Nancy Green
+42,Playboy Bunny
+43,Sidney Prescott
+44,Chef Boyardee
+45,Willy Wonka
+46,Billy the Puppet
+47,Donald Duck
+48,Fred Flintstone
+49,Ken
+50,Leo the Lion
+51,Lucky Charms
+52,Marlboro Man
+53,Max Headroom
+54,The Most Interesting Man in the World
+55,The Noid
+56,Eddie
+57,Public service announcement
+58,Smokey Bear
+59,Mascot
+60,Mass media
+61,Buffy Summers
+62,Cola wars
+63,Email spam
+64,Bella Swan
+65,Guerrilla marketing
+66,Social media marketing
+67,A minor
+68,A.E.I.O.U.
+69,A7V
+70,Snoh Aalegra
+71,Aaliyah
+72,Aam Aadmi Party
+73,Aardman Animations
+74,Animation
+75,Casper the Friendly Ghost
+76,Daffy Duck
+77,Garfield
+78,Godzilla
+79,Gollum
+80,King Kong
+81,Jimmy Neutron
+82,Oswald the Lucky Rabbit
+83,Popeye
+84,Salad Fingers
+85,Batgirl
+86,Huntress
+87,Betty Boop
+88,Daphne Blake
+89,Lola Bunny
+90,Catwoman
+91,The Chipettes
+92,Betty Cooper
+93,Wendy Darling
+94,Della Duck
+95,Daisy Duck
+96,Emma Frost
+97,Dorothy Gale
+98,Jean Grey
+99,Veronica Lodge
+100,Maleficent
+101,Mammy Two Shoes
+102,Mother Gothel
+103,Minnie Mouse
+104,Mystique
+105,Olive Oyl
+106,Peppermint Patty
+107,Jessica Rabbit
+108,Sabrina Spellman
+109,Storm
+110,Venus
+111,Wonder Twins
+112,X-23
+113,Aladdin
+114,Archie Andrews
+115,King Arthur
+116,Baby Huey
+117,Bagheera
+118,Baloo
+119,Barbapapa
+120,Bebop and Rocksteady
+121,Black Panther
+122,Bluto
+123,Charlie Brown
+124,Dick Dastardly
+125,Dr. Heinz Doofenshmirtz
+126,Foghorn Leghorn
+127,Forky
+128,Geppetto
+129,Speedy Gonzales
+130,Max Goof
+131,Goofy
+132,The Great Gazoo
+133,Grinch
+134,Hong Kong Phooey
+135,"Huey, Dewey, and Louie"
+136,Jay and Silent Bob
+137,Jerry Mouse
+138,George Jetson
+139,Fred Jones
+140,Jughead Jones
+141,Krang
+142,King Louie
+143,Mr. Magoo
+144,Marvin the Martian
+145,Groot
+146,Rocket
+147,Link
+148,Warner Bros. Cartoons
+149,Animaniacs
+150,Looney Tunes Cartoons
+151,New Looney Tunes
+152,Pingu
+153,Screen Gems
+154,Columbia Pictures
+155,Mary Jane Watson
+156,Davy Jones
+157,Jack Skellington
+158,Frog and Toad
+159,Hawk and Dove
+160,Mermaid Man and Barnacle Boy
+161,Pinky and the Brain
+162,Plankton and Karen
+163,The Rescuers
+164,T.O.T.S.
+165,Timon and Pumbaa
+166,Tom and Jerry
+167,Tweedledum and Tweedledee
+168,Wile E. Coyote and the Road Runner
+169,Paramount Pictures
+170,Raggedy Ann
+171,Fleischer Studios
+172,Max Fleischer
+173,Hanna-Barbera
+174,Muttley
+175,Scrappy-Doo
+176,Snagglepuss
+177,Space Ghost
+178,Yogi Bear
+179,Aang
+180,Adrien Agreste
+181,Azula
+182,Batman
+183,Beavis
+184,Toph Beifong
+185,Bulma
+186,Eric Cartman
+187,Velma Dinkley
+188,Marinette Dupain-Cheng
+189,Doctor Eggman
+190,Elmer Fudd
+191,Evil Queen
+192,Lord Farquaad
+193,Finn the Human
+194,Princess Fiona
+195,Ned Flanders
+196,Phineas Flynn
+197,Mr. Garrison
+198,Gaston
+199,Lois Griffin
+200,Meg Griffin
+201,Peter Griffin
+202,Stewie Griffin
+203,He-Man
+204,Herbert
+205,The Hex Girls
+206,Captain Hook
+207,Iroh
+208,Jinx
+209,Joker
+210,Korra
+211,Edna Krabappel
+212,Krusty the Clown
+213,Troy McClure
+214,Edna Mode
+215,Alucard
+216,Renee Montoya
+217,Harley Quinn
+218,She-Ra
+219,Metro-Goldwyn-Mayer
+220,United Artists
+221,Droopy
+222,Tom Cat
+223,Alvin and the Chipmunks
+224,The Archies
+225,BanG Dream!
+226,Dethklok
+227,Ensemble Stars!
+228,Fat Albert and the Cosby Kids
+229,Gorillaz
+230,Hi Hi Puffy AmiYumi
+231,Jem
+232,Josie and the Pussycats
+233,K/DA
+234,Simpson family
+235,Sonic Underground
+236,Merida
+237,Donkey
+238,Puss in Boots
+239,Shrek
+240,Gumby
+241,Mighty Mouse
+242,Ub Iwerks
+243,Cartoon
+244,Universal Pictures
+245,Villain
+246,Stock character
+247,Crime
+248,Play
+249,Novel
+250,Evil
+251,Rick Sanchez
+252,Warner Bros.
+253,Tasmanian Devil
+254,Werewolf
+255,Film
+256,Computer animation
+257,Stop motion
+258,Anti-Venom
+259,Captain Atom
+260,Cheetah
+261,Jonah Hex
+262,Lucky Luke
+263,Mary Marvel
+264,Mister Terrific
+265,Negasonic Teenage Warhead
+266,Robin
+267,Superman in film
+268,Morticia Addams
+269,Wednesday Addams
+270,Talia al Ghul
+271,Baroness
+272,Birds of Prey
+273,Cheryl Blossom
+274,Clayface
+275,Darna
+276,Gomez Addams
+277,Pugsley Addams
+278,Cobra Commander
+279,Wikimedia Commons
+280,Black Canary
+281,Power Girl
+282,Hua Mulan
+283,Black people
+284,Comics
+285,Black Lightning
+286,Cyborg
+287,Falcon
+288,Lucius Fox
+289,Miles Morales
+290,Monica Rambeau
+291,Uncle Ruckus
+292,Static
+293,War Machine
+294,Carl Grimes
+295,Cryonics
+296,Bucky Barnes
+297,Captain America
+298,Mr. Freeze
+299,Omega Red
+300,Red Skull
+301,Sailor Moon
+302,Spider-Woman
+303,Wonder Man
+304,Hellboy
+305,Nezuko Kamado
+306,Tanjiro Kamado
+307,Majin Buu
+308,Spawn
+309,Ryomen Sukuna
+310,Calvin and Hobbes
+311,Jack Harkness
+312,Marceline the Vampire Queen
+313,Countryballs
+314,Orphan
+315,Little Orphan Annie
+316,Tarzan
+317,Doraemon
+318,Superhero
+319,Comic book
+320,Blue Beetle
+321,Leonardo
+322,Soldier Boy
+323,Teenage Mutant Ninja Turtles
+324,Liz Allan
+325,Bart Allen
+326,Blackfire
+327,Donatello
+328,Tim Drake
+329,Iceman
+330,Invincible
+331,Michelangelo
+332,Kitty Pryde
+333,Raphael
+334,Snow White
+335,Spider-Man
+336,Superboy
+337,Teen Titans
+338,Donna Troy
+339,Wally West
+340,Twin
+341,Booster Gold
+342,Captain Britain
+343,Captain Marvel
+344,John Constantine
+345,Jor-El
+346,Martian Manhunter
+347,Quicksilver
+348,Scarlet Witch
+349,Skaar
+350,Wiccan
+351,Professor X
+352,Nagato
+353,Itachi Uchiha
+354,Madara Uchiha
+355,Gargamel
+356,Trollface
+357,Wojak
+358,Marvel Comics
+359,DC Comics
+360,Newspaper
+361,Webcomic
+362,World Wide Web
+363,Media franchise
+364,Robin Hood
+365,Sinbad the Sailor
+366,Irene Adler
+367,Anna
+368,Arwen
+369,Lyra Belacqua
+370,Elizabeth Bennet
+371,Kate Bishop
+372,Bo Peep
+373,The Bride
+374,Foxy Brown
+375,Daisy Buchanan
+376,Sally Carrera
+377,Peggy Carter
+378,Sharon Carter
+379,Sarah Connor
+380,Connie Corleone
+381,Mary Corleone
+382,Cosette
+383,Tia Dalma
+384,Carol Danvers
+385,Rachel Dawes
+386,Blanche DuBois
+387,Elphaba
+388,Elsa
+389,Emmanuelle
+390,Enchantress
+391,Enchantress
+392,Jyn Erso
+393,Esmeralda
+394,Katniss Everdeen
+395,Fantine
+396,Jane Foster
+397,Imperator Furiosa
+398,Galadriel
+399,Gamora
+400,Elvira Hancock
+401,Miss Havisham
+402,Maria Hill
+403,Ilsa:She Wolf of the SS
+404,Invisible Woman
+405,Lady Jessica
+406,Bridget Jones
+407,Kamala Khan
+408,Lois Lane
+409,Princess Leia
+410,Pippi Longstocking
+411,Luna Lovegood
+412,Santa Claus
+413,Moira MacTaggert
+414,Mantis
+415,Beverly Marsh
+416,Wanda Maximoff
+417,Minerva McGonagall
+418,Ali Mills
+419,Uncle Sam
+420,Miss Moneypenny
+421,Mon Mothma
+422,Mothra
+423,Mrs. Doubtfire
+424,Nala
+425,Admiral Ackbar
+426,Cassian Andor
+427,Artful Dodger
+428,Frodo Baggins
+429,Bruce Banner
+430,Bucky Barnes
+431,Clint Barton
+432,The BFG
+433,Jar Jar Binks
+434,Jacob Black
+435,Sirius Black
+436,James Bond
+437,Eddie Brock
+438,Kyle Broflovski
+439,Bumblebee
+440,Rhett Butler
+441,Lando Calrissian
+442,Chef
+443,Cheshire Cat
+444,Fredo Corleone
+445,Sonny Corleone
+446,Phil Coulson
+447,Edward Cullen
+448,Arthur Curry
+449,Cyclops
+450,Poe Dameron
+451,Silvio Dante
+452,Mr. Darcy
+453,Deadpool
+454,Doctor Strange
+455,Count Dracula
+456,Albus Dumbledore
+457,Mike Ehrmantraut
+458,Eighth Doctor
+459,Uncle Fester
+460,Huckleberry Finn
+461,Flash Gordon
+462,Captain Flint
+463,Nick Fury
+464,Gambit
+465,Samwise Gamgee
+466,Jay Gatsby
+467,Saw Gerrera
+468,Gimli
+469,Groot
+470,Paulie Gualtieri
+471,Forrest Gump
+472,Rubeus Hagrid
+473,Mickey Haller
+474,Hawkeye
+475,Greg Heffley
+476,Mycroft Holmes
+477,Sherlock Holmes
+478,Hulk
+479,Shinji Ikari
+480,Cousin Itt
+481,BB-8
+482,Chewbacca
+483,Jiminy Cricket
+484,Fozzie Bear
+485,Hermione Granger
+486,Doc Holliday
+487,Felix Leiter
+488,Lost Boys
+489,Mini-Me
+490,Olaf
+491,Piglet
+492,R2-D2
+493,Marion Ravenwood
+494,Sallah
+495,Tonto
+496,Dr. Watson
+497,Ron Weasley
+498,Ennis Del Mar
+499,Vladimir Harkonnen
+500,Trini Kwan
+501,Lestat de Lioncourt
+502,Loki
+503,Louis de Pointe du Lac
+504,Tom Ripley
+505,Lisbeth Salander
+506,Hikaru Sulu
+507,Richie Tozier
+508,Sadako Yamamura
+509,Yukio
+510,Dick Tracy
+511,Green Hornet
+512,Lone Ranger
+513,Fu Manchu
+514,Buck Rogers
+515,The Shadow
+516,Superman
+517,Zorro
+518,Caesar
+519,Dr. Evil
+520,Knuckles the Echidna
+521,Freddy Krueger
+522,Leatherface
+523,Peter Quill
+524,Luke Skywalker
+525,Laurie Strode
+526,Tails
+527,Brian Griffin
+528,Ariel
+529,Black Manta
+530,Candyman
+531,Apollo Creed
+532,Adonis Creed
+533,Electro
+534,Dick Hallorann
+535,Erik Killmonger
+536,Kunta Kinte
+537,Clubber Lang
+538,Niobe
+539,James Rhodes
+540,Angel Salvadore
+541,Tiana
+542,Nyota Uhura
+543,Valkyrie
+544,Sam Wilson
+545,Mace Windu
+546,John Connor
+547,Elmo
+548,Boba Fett
+549,Little Red Riding Hood
+550,Jamie Lloyd
+551,Neville Longbottom
+552,Regan MacNeil
+553,Draco Malfoy
+554,Michael Myers
+555,Peter Pan
+556,Susan Pevensie
+557,Pinocchio
+558,Harry Potter
+559,Tom Sawyer
+560,Anne Shirley
+561,Tiny Tim
+562,Danny Torrance
+563,Jason Voorhees
+564,Ginny Weasley
+565,The Blues Brothers
+566,Dumb and Dumber
+567,Sholay
+568,Extraterrestrial life
+569,Predator
+570,Byomkesh Bakshi
+571,Baba Yaga
+572,Cinderella
+573,Kristoff
+574,Vesper Lynd
+575,Peeta Mellark
+576,Inigo Montoya
+577,Nebula
+578,Peter Parker
+579,Peter Parker
+580,Peter Parker
+581,Captain Phasma
+582,Kyle Reese
+583,Rey
+584,Steve Rogers
+585,Natasha Romanoff
+586,Han Solo
+587,Tony Stark
+588,superman
+589,Lord Voldemort
+590,Bruce Wayne
+591,John Wick
+592,Peter Maximoff
+593,Splinter
+594,Character
+595,Psychological
+596,Puberty
+597,Adult
+598,Anton Chigurh
+599,Alex
+600,Cedric Diggory

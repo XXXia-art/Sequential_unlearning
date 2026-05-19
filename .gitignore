@@ -1,0 +1,35 @@
+﻿# Experiment outputs
+logs/
+eval_results/
+data/pretrain/
+
+# Large model weights
+*.pt
+*.pth
+*.safetensors
+*.bin
+*.ckpt
+cache/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+*.env
+
+# Submodules
+celeb-detection-oss/
