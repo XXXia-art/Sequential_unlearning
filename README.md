@@ -52,8 +52,8 @@ pip install -r celeb-detection-oss/requirements_gpu.txt
 ## Installation
 
 ```bash
-git clone <repository-url>
-cd Instance_log
+git clone https://github.com/XXXia-art/Sequential_unlearning.git
+cd Sequential_unlearning
 
 # 1. Install main environment
 conda create -n speed python=3.10
@@ -63,7 +63,8 @@ pip install -r requirements.txt
 # 2. Download InceptionV3 weights for FID computation
 # Place at: cache/weights-inception-2015-12-05-6726825d.pth
 
-# 3. (Optional) Install GCD environment for celebrity evaluation
+# 3. (Optional) Clone GCD submodule for celebrity evaluation
+git clone https://github.com/XXXia-art/celeb-detection-oss.git celeb-detection-oss
 conda create -n gcd_tf1 python=3.7
 conda activate gcd_tf1
 pip install -r celeb-detection-oss/requirements_gpu.txt
@@ -282,7 +283,8 @@ Instance_log/
 │   ├── celebrity.csv
 │   └── mscoco.csv
 │
-├── celeb-detection-oss/      # Original GCD codebase (TF1.x + PyTorch)
+├── celeb-detection-oss/      # (Clone separately) Original GCD codebase
+│   │                           # git clone https://github.com/XXXia-art/celeb-detection-oss.git
 │   ├── examples/inference.py # Single-image GCD inference
 │   ├── requirements_cpu.txt  # GCD environment (CPU)
 │   └── requirements_gpu.txt  # GCD environment (GPU)
