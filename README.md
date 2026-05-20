@@ -9,11 +9,25 @@ This repository implements four closed-form concept erasure methods:
 | Method | File | Core Mechanism |
 |--------|------|----------------|
 | **AlphaEdit** | `Alphaedit.py` | Closed-form SVD-based editing of UNet cross-attention `to_k`/`to_v` weights |
+| **SPEED** | `speed.py` | Closed-form editing + DFA perturbation generation + IPF retain sample filtering |
 | **Alpha_delta** | `Alpha_delta.py` | AlphaEdit + DeltaEdit history projection to prevent catastrophic forgetting |
 | **Alpha_delta_v2** | `Alpha_delta_v2.py` | Enhanced Alpha_delta with edit direction analysis and top-1 historical projection |
-| **SPEED** | `speed.py` | Closed-form editing + DFA perturbation generation + IPF retain sample filtering |
+
 
 All methods support **sequential editing** (erasing concepts one by one) by loading previously edited checkpoints.
+
+
+## Installation
+
+```bash
+git clone https://github.com/XXXia-art/Sequential_unlearning.git
+cd Sequential_unlearning
+
+# 1. Install main environment (for training, sampling, CLIP/FID evaluation)
+conda create -n speed python=3.10
+conda activate speed
+pip install -r requirements.txt
+```
 
 ## Default Hyperparameters
 
@@ -43,23 +57,6 @@ The following hyperparameters are shared across all methods (overridable via env
 | Style | `"art"` | Art-style anchor for style concepts |
 | Celebrity | `"person"` | Person anchor for celebrity concepts |
 
-## Installation
-
-```bash
-git clone https://github.com/XXXia-art/Sequential_unlearning.git
-cd Sequential_unlearning
-
-# 1. Install main environment (for training, sampling, CLIP/FID evaluation)
-conda create -n speed python=3.10
-conda activate speed
-pip install -r requirements.txt
-```
-
-**Key dependencies:**
-- PyTorch 2.3.0 + CUDA 12.1
-- diffusers 0.32.2
-- transformers 4.48.0
-- torch-fidelity, lpips, kmeans-pytorch
 
 ### Download InceptionV3 Weights for FID
 
@@ -78,7 +75,7 @@ curl -L -o cache/weights-inception-2015-12-05-6726825d.pth \
     https://github.com/toshas/torch-fidelity/releases/download/v0.2.0/weights-inception-2015-12-05-6726825d.pth
 ```
 
-> If you skip this step, `torch_fidelity` will download the weights automatically on the first FID evaluation.
+> If you skip this step, `torch_fidelity` will download the weights automatically on the first FID evaluation to `~/.cache/torch-fidelity/` (or the platform-specific cache directory).
 
 ## Datasets
 
@@ -94,25 +91,18 @@ curl -L -o cache/weights-inception-2015-12-05-6726825d.pth \
 ### 1. Concept Erasure (Editing)
 
 Edit the UNet to erase target concepts while preserving retain concepts:
+|  | optional parameters |
+|---------|------|
+| **method** | `alphaedit, alpha_delta, alpha_delta_v2, speed` | 
+| **dataset** | `instance, style, celebrity` | 
+| **group_size** | `2,1` |
+| **gpu** | `/` | 
+
 
 ```bash
 # Usage: bash scripts/train.sh <method> <dataset> <group_size> <gpu>
-# Default: 2 concepts per step, 100 steps total
-
-# AlphaEdit on Instance, 2 concepts per step
-bash scripts/train.sh alphaedit instance 2 0
-
-# SPEED on Instance, 2 concepts per step
-bash scripts/train.sh speed instance 2 0
-
 # Alpha_delta on Instance, 2 concepts per step
 bash scripts/train.sh alpha_delta instance 2 0
-
-# Alpha_delta_v2 on Style, 2 concepts per step
-bash scripts/train.sh alpha_delta_v2 style 2 0
-
-# SPEED on Celebrity, 2 concepts per step
-bash scripts/train.sh speed celebrity 2 0
 ```
 
 **Advanced options:**
@@ -139,35 +129,24 @@ Generate images using the edited model to evaluate erasure quality:
 
 # Instance target/retain (concept sharding across GPUs)
 bash scripts/sample.sh alpha_delta instance target edit 0,1,2,3
-bash scripts/sample.sh speed instance retain edit 0,1,2,3
-
-# Style target/retain
-bash scripts.sample.sh alpha_delta_v2 style target edit 0,1,2,3
-bash scripts.sample.sh speed style retain edit 0,1,2,3
-
-# Celebrity target/retain/all
-bash scripts.sample.sh alpha_delta celebrity target edit 0,1,2,3
-bash scripts.sample.sh speed celebrity retain edit 0,1,2,3
-bash scripts.sample.sh alpha_delta_v2 celebrity all edit 0,1,2,3
 
 # COCO generalization sampling (single GPU)
 bash scripts.sample.sh speed coco coco edit 0
 
 # Original baseline (no edit_ckpt)
 bash scripts.sample.sh alphaedit instance target original 0,1
-bash scripts.sample.sh speed style retain original 0,1
 ```
 
 **Advanced options:**
 
 ```bash
-# Use a specific step checkpoint
+# Use a specific step checkpoint (defult step = 100)
 STEP=50 bash scripts.sample.sh alpha_delta instance target edit 0
 
 # Resume: skip already-sampled concepts
 RESUME=true bash scripts.sample.sh speed instance retain edit 0,1
 
-# Specify custom concepts for sampling
+# Specify custom concepts for sampling, still need split
 CONCEPTS="SpongeBob" bash scripts.sample.sh alpha_delta instance target edit 0
 CONCEPTS="SpongeBob;Mickey Mouse" bash scripts.sample.sh speed instance target edit 0,1
 ```
@@ -224,7 +203,7 @@ Celebrity face recognition evaluation uses the original GCD codebase, which requ
 
 ```bash
 # Clone GCD code (not included in this repo due to large model files)
-git clone https://github.com/XXXia-art/celeb-detection-oss.git celeb-detection-oss
+git clone https://github.com/Giphy/celeb-detection-oss.git celeb-detection-oss
 
 # Create and activate GCD environment
 conda create -n gcd_tf1 python=3.7
@@ -310,47 +289,3 @@ Instance_log/
 ├── logs/                     # Training checkpoints and sampled images
 └── eval_results/             # Evaluation CSV outputs
 ```
-
-## Notes
-
-### Sequential Editing
-
-All methods support sequential editing by loading a previously edited checkpoint:
-
-```bash
-# After step_001, edit step_002 starting from step_001's checkpoint
-python speed.py \
-    --target_concept step_002 \
-    --edit_ckpt logs/Speed/instance/step_001/weight.pt \
-    ...
-```
-
-### Checkpoint Formats
-
-- AlphaEdit / Alpha_delta / Alpha_delta_v2 / SPEED: PyTorch `.pt` files
-- The `sample*.py` scripts can load `.pt` or `.safetensors` checkpoints via `--edit_ckpt`
-
-### GPU Memory
-
-- Training/editing: ~16 GB VRAM (single A100/V100/RTX 3090)
-- Sampling: ~12 GB VRAM (configurable via `--batch_size`)
-- GCD evaluation: MTCNN runs on CPU (TF1.x), ResNet50 on GPU
-
-## Troubleshooting
-
-**Q: `ModuleNotFoundError` when running GCD evaluation?**
-> Make sure you are in the `gcd_tf1` environment, not the main `speed` environment.
-
-**Q: CUDA out of memory during sampling?**
-> Reduce `--batch_size` in the sampling scripts.
-
-**Q: Where are the edited model weights saved?**
-> Check `logs/{method}/{dataset}/step_*/weight.pt`.
-
-## Citation
-
-If you use this code in your research, please cite the corresponding methods.
-
-## License
-
-This project is released under the MIT License. The `celeb-detection-oss` submodule follows its own license terms.
