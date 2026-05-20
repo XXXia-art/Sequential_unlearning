@@ -179,7 +179,7 @@ def edit_model(
 # -------------------------------------------------
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--sd_ckpt', help='base version for stable diffusion', type=str, default='/data/coding/model_weight/SD')
+    parser.add_argument('--sd_ckpt', help='base version for stable diffusion', type=str, default='CompVis/stable-diffusion-v1-4')
     parser.add_argument("--edit_ckpt", help="save history weight,m,v", type=str, default=None)
     parser.add_argument("--save_path", type=str, required=True)
     parser.add_argument("--target_concepts", type=str, required=True)
