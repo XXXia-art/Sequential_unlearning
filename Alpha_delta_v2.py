@@ -159,7 +159,7 @@ def edit_model(
     eta = args.eta
     match = re.search(r"step_(\d+)", args.save_path)
     step = int(match.group(1))
-    config_path = os.path.join(os.path.dirname(os.path.dirname(args.save_path)), "config.txt")
+    config_path = os.path.join(os.path.dirname(args.save_path), "config.txt")
     with open(config_path, "a") as f:
         f.write(
             f"[step {step:03d}] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> \n"
@@ -408,7 +408,7 @@ if __name__ == "__main__":
     torch.save(v_hist, v_path)
     
     # ---- noise_E log path ----
-    log_dir = os.path.dirname(os.path.dirname(args.save_path))
+    log_dir = os.path.dirname(args.save_path)
     match = re.search(r"step_(\d+)", args.save_path)
     step = int(match.group(1))
     os.makedirs(log_dir, exist_ok=True)
