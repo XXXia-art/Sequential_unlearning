@@ -176,7 +176,7 @@ run_eval() {
     extra_args+=(--pretrained_path "$PRETRAINED")
   fi
 
-  if [ -n "$ROOT_PATH" ]; then
+  if [ -n "${ROOT_PATH:-}" ]; then
     root_path="$ROOT_PATH"
   fi
 
