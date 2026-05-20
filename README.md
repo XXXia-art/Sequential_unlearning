@@ -76,7 +76,7 @@ pip install -r celeb-detection-oss/requirements_gpu.txt
 |---------|------|------|-------------|
 | **Instance** | `data/instance.csv` | 600 concepts | id 1-200 = target (erase), 201-600 = retain |
 | **Style** | `data/style.csv` | ~1700 concepts | Artistic styles for erasure |
-| **Celebrity** | `data/celebrity.csv` | 220 celebrities | For face recognition evaluation |
+| **Celebrity** | `data/celebrity.csv` | 600 celebrities | For face recognition evaluation |
 | **MS COCO** | `data/mscoco.csv` | 30K pairs | General generation capability evaluation |
 
 ## Quick Start
