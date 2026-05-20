@@ -291,7 +291,7 @@ PY
 
     echo "[LAUNCH] GPU $gpu → $chunk_n concepts"
 
-    local edit_args=()
+    edit_args=()
     if [ "$MODE" == "edit" ] && [ -n "$CKPT" ]; then
       edit_args+=(--edit_ckpt "$CKPT")
     fi
