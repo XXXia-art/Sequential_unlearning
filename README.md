@@ -69,6 +69,9 @@ KEEP_STEPS="10 20 30 40 50 60 70 80 90 100" bash scripts/train.sh alpha_delta in
 
 # Override hyperparameters
 SAVE_ROOT=logs/MyExp DELTA_COEF=0.95 bash scripts/train.sh alpha_delta style 2 0
+
+# Use a custom Stable Diffusion checkpoint (local path or HuggingFace repo id)
+SD_CKPT=CompVis/stable-diffusion-v1-4 bash scripts/train.sh alpha_delta instance 2 0
 ```
 
 Edited checkpoints are saved under `logs/{method}/{dataset}/step_*/weight.pt`.

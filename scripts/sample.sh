@@ -230,6 +230,12 @@ if [ "$DATASET" == "coco" ]; then
     edit_args+=(--edit_ckpt "$CKPT")
   fi
 
+  # Optional SD checkpoint override
+  SD_CKPT_ARG=()
+  if [ -n "${SD_CKPT:-}" ]; then
+    SD_CKPT_ARG=(--sd_ckpt "$SD_CKPT")
+  fi
+
   CUDA_VISIBLE_DEVICES="$gpu" "$PYTHON_BIN" "$SAMPLER" \
     --erase_type "$ERASE_TYPE" \
     --contents "coco" \
@@ -239,6 +245,7 @@ if [ "$DATASET" == "coco" ]; then
     --save_root "${SAVE_ROOT}/${step_name}" \
     --gpu 0 \
     "${edit_args[@]}" \
+    "${SD_CKPT_ARG[@]}" \
     > "logs/sample_${METHOD}_${DATASET}_${SPLIT}_gpu${gpu}.log" 2>&1
 
 else
@@ -289,6 +296,12 @@ PY
       edit_args+=(--edit_ckpt "$CKPT")
     fi
 
+    # Optional SD checkpoint override
+    SD_CKPT_ARG=()
+    if [ -n "${SD_CKPT:-}" ]; then
+      SD_CKPT_ARG=(--sd_ckpt "$SD_CKPT")
+    fi
+
     CUDA_VISIBLE_DEVICES="$gpu" "$PYTHON_BIN" "$SAMPLER" \
       --erase_type "$ERASE_TYPE" \
       --target_concept "$step_name" \
@@ -299,6 +312,7 @@ PY
       --save_root "$SAVE_ROOT" \
       --gpu 0 \
       "${edit_args[@]}" \
+      "${SD_CKPT_ARG[@]}" \
       > "logs/sample_${METHOD}_${DATASET}_${SPLIT}_gpu${gpu}.log" 2>&1 &
 
     PIDS+=($!)

@@ -212,6 +212,12 @@ for ((step=START_STEP; step<=100; step++)); do
         fi
     fi
 
+    # Optional SD checkpoint override
+    SD_CKPT_ARG=()
+    if [ -n "${SD_CKPT:-}" ]; then
+        SD_CKPT_ARG=(--sd_ckpt "$SD_CKPT")
+    fi
+
     CUDA_VISIBLE_DEVICES=$GPU "$PYTHON_BIN" "$PY_SCRIPT" \
         --target_concepts "$current_targets" \
         --anchor_concepts "$ANCHOR" \
@@ -225,6 +231,7 @@ for ((step=START_STEP; step<=100; step++)); do
         --seed "$SEED" \
         --dtype "$DTYPE" \
         "${EXTRA_PY_ARGS[@]}" \
+        "${SD_CKPT_ARG[@]}" \
         "${EXTRA_ARGS[@]}"
 
     # -----------------------------------------------------------------------
