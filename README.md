@@ -29,54 +29,6 @@ conda activate speed
 pip install -r requirements.txt
 ```
 
-## Default Hyperparameters
-
-The following hyperparameters are shared across all methods (overridable via environment variables when calling `scripts/train.sh`):
-
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `params` | `V` | Edited projection: `V` = to_v, `K` = to_k, `KV` = to_k + to_v |
-| `aug_num` | `10` | Number of augmented retain samples per concept |
-| `threshold` | `1e-1` | SVD energy threshold for constructing retain projection matrix |
-| `retain_scale` | `1.0` | Scaling factor for retain concept loss |
-| `seed` | `0` | Random seed for reproducibility |
-| `dtype` | `float32` | Model weight dtype |
-
-**Method-specific extra parameters:**
-
-| Parameter | Default | Methods | Description |
-|-----------|---------|---------|-------------|
-| `delta_coef` | `0.90` | Alpha_delta, Alpha_delta_v2 | DeltaEdit update coefficient |
-| `eta` | `1.0` | Alpha_delta, Alpha_delta_v2 | History noise threshold multiplier |
-
-**Dataset-specific anchors:**
-
-| Dataset | Anchor | Usage |
-|---------|--------|-------|
-| Instance | `" "` (space) | Null anchor for instance concepts |
-| Style | `"art"` | Art-style anchor for style concepts |
-| Celebrity | `"person"` | Person anchor for celebrity concepts |
-
-
-### Download InceptionV3 Weights for FID
-
-`torch_fidelity` requires InceptionV3 weights to compute FID. You can either let it auto-download on first run, or prepare manually:
-
-```bash
-# Create cache directory
-mkdir -p cache
-
-# Download manually (recommended for offline / cluster environments)
-wget -O cache/weights-inception-2015-12-05-6726825d.pth \
-    https://github.com/toshas/torch-fidelity/releases/download/v0.2.0/weights-inception-2015-12-05-6726825d.pth
-
-# Or download via curl
-curl -L -o cache/weights-inception-2015-12-05-6726825d.pth \
-    https://github.com/toshas/torch-fidelity/releases/download/v0.2.0/weights-inception-2015-12-05-6726825d.pth
-```
-
-> If you skip this step, `torch_fidelity` will download the weights automatically on the first FID evaluation to `~/.cache/torch-fidelity/` (or the platform-specific cache directory).
-
 ## Datasets
 
 | Dataset | File | Size | Description |
@@ -131,10 +83,10 @@ Generate images using the edited model to evaluate erasure quality:
 bash scripts/sample.sh alpha_delta instance target edit 0,1,2,3
 
 # COCO generalization sampling (single GPU)
-bash scripts.sample.sh speed coco coco edit 0
+bash scripts/sample.sh speed coco coco edit 0
 
 # Original baseline (no edit_ckpt)
-bash scripts.sample.sh alphaedit instance target original 0,1
+bash scripts/sample.sh alphaedit instance all original 0,1
 ```
 
 **Advanced options:**
@@ -147,8 +99,8 @@ STEP=50 bash scripts.sample.sh alpha_delta instance target edit 0
 RESUME=true bash scripts.sample.sh speed instance retain edit 0,1
 
 # Specify custom concepts for sampling, still need split
-CONCEPTS="SpongeBob" bash scripts.sample.sh alpha_delta instance target edit 0
-CONCEPTS="SpongeBob;Mickey Mouse" bash scripts.sample.sh speed instance target edit 0,1
+CONCEPTS="SpongeBob" bash scripts/sample.sh alpha_delta instance target edit 0
+CONCEPTS="SpongeBob;Mickey Mouse" bash scripts/sample.sh speed instance target edit 0,1
 ```
 
 Generated images are organized as:
@@ -197,9 +149,28 @@ Metrics:
 
 #### 3.2 GCD Celebrity Evaluation (Requires Second Environment)
 
-Celebrity face recognition evaluation uses the original GCD codebase, which requires **TensorFlow 1.x** and must run in a separate environment.
+Celebrity evaluation uses the **original GIPHY celeb-detection-oss** codebase to perform face recognition on generated images. It answers the question: *"After erasing a celebrity, does the model still generate images that a face recognizer can identify as that celebrity?"*
+
+**Prerequisite: you must generate the images first.** GCD eval reads the sampled images from disk; it does not run the diffusion model itself.
+
+```bash
+# 1. Generate images with the edited model (if not already done)
+bash scripts/sample.sh alpha_delta celebrity all edit 0,1,2,3
+
+# 2. (Optional) Generate baseline images with the original model
+bash scripts/sample.sh alpha_delta celebrity all original 0,1,2,3
+```
+
+Images are expected at:
+```
+logs/{method}/celebrity/step_100/{concept}/edit/
+```
+
+---
 
 **Step 1: Install GCD environment**
+
+The GCD codebase requires **TensorFlow 1.x**, which is incompatible with the main PyTorch 2.x environment. You must create a separate conda env.
 
 ```bash
 # Clone GCD code (not included in this repo due to large model files)
@@ -211,29 +182,58 @@ conda activate gcd_tf1
 pip install -r celeb-detection-oss/requirements_gpu.txt
 ```
 
-> **Why a separate environment?** The original GCD code relies on TensorFlow 1.15.2, which is incompatible with PyTorch 2.x and requires CUDA 10.0.
+> **Why a separate environment?** The original GCD code relies on TensorFlow 1.15.2, which is incompatible with PyTorch 2.x and requires CUDA 10.0. The face detector (MTCNN) runs on CPU even on modern GPUs to avoid CUDA version conflicts; only the PyTorch ResNet recognizer uses GPU.
 
-**Step 2: Run GCD evaluation**
+---
+
+**Step 2: Run GCD evaluation (single method)**
+
+Run `eval_gcd_original.py` inside the `gcd_tf1` environment. It will:
+1. Load the GCD face detector + recognizer.
+2. Scan every generated image under `logs/{method}/celebrity/step_100/`.
+3. Check whether the erased celebrity is still recognized (top-1 and top-5).
+4. Output per-concept and summary CSVs to `eval_results/gcd_original/`.
 
 ```bash
-conda activate gcd_tf1
+# Single method (equivalent to the direct python call above)
+bash scripts/eval_celebrity.sh alpha_delta step_100 0
 
-CUDA_VISIBLE_DEVICES=0 python eval_gcd_original.py \
-    --method alpha_delta \
-    --erase_type celebrity \
-    --step_name step_100 \
-    --gpu 0
+# Evaluate another method on GPU 1
+bash scripts/eval_celebrity.sh speed step_100 1
 ```
 
-Metrics:
-- **Acc_e**: % of target images still recognized (lower is better)
-- **Acc_r**: % of retain images correctly recognized (higher is better)
-- **H_o**: Harmonic mean = 2 × Acc_r × (100 - Acc_e) / (Acc_r + (100 - Acc_e))
+Arguments:
+- `method`: `alphaedit` | `speed` | `alpha_delta` | `alpha_delta_v2` | `all`
+- `step`: Step directory to evaluate, e.g., `step_100`
+- `gpus`: Comma-separated GPU ids, e.g., `0` or `0,1,2,3`
 
-**Step 3: Parallel GCD evaluation (multi-GPU)**
+Metrics:
+- **Acc_e** (erase accuracy): % of target images where the erased celebrity is **still recognized**. Lower is better.
+- **Acc_r** (retain accuracy): % of retain images where the celebrity is **correctly recognized**. Higher is better.
+- **H_o** (harmonic mean): Overall trade-off = `2 × Acc_r × (100 - Acc_e) / (Acc_r + (100 - Acc_e))`. Higher is better.
+
+Results:
+- `eval_results/gcd_original/{method}_per_concept.csv` — per-celebrity accuracy
+- `eval_results/gcd_original/{method}_summary.csv` — aggregated top-1 / top-5 summary
+
+---
+
+**Step 3: Parallel GCD evaluation (multi-GPU, multi-method)**
+
+Evaluate all methods in parallel, one per GPU:
 
 ```bash
-bash scripts/eval_celebrity.sh
+bash scripts/eval_celebrity.sh all step_100 0,1,2,3
+```
+
+Advanced:
+
+```bash
+# Evaluate only a subset of methods
+GCD_METHODS="alpha_delta speed" bash scripts/eval_celebrity.sh all step_100 0,1
+
+# Use a specific Python binary (if conda auto-detection fails)
+GCD_PYTHON=/opt/conda/envs/gcd_tf1/bin/python bash scripts/eval_celebrity.sh all step_100 0,1,2,3
 ```
 
 ## Evaluation Metrics
@@ -247,45 +247,30 @@ bash scripts/eval_celebrity.sh
 | **Acc_r** | `eval_gcd_original.py` | Retain recognition rate | - | Higher ↑ |
 | **H_o** | `eval_gcd_original.py` | Harmonic mean | Higher ↑ | Higher ↑ |
 
-## Project Structure
 
-```
-Instance_log/
-├── Alphaedit.py              # AlphaEdit method
-├── Alpha_delta.py            # Alpha_delta method
-├── Alpha_delta_v2.py         # Alpha_delta_v2 method (with direction analysis)
-├── speed.py                  # SPEED method
-├── sample.py                 # Basic sampling script
-├── sample2.py                # DataLoader-based batch sampling
-├── sample_fast.py            # Fast multi-prompt batched sampling
-├── eval_gcd_original.py      # Original GCD evaluation (requires gcd_tf1 env)
-├── requirements.txt          # Main environment dependencies
-│
-├── scripts/                  # Unified scripts
-│   ├── train.sh              # Unified training script
-│   ├── sample.sh             # Unified sampling script
-│   ├── eval.sh               # Unified CLIP+FID evaluation script
-│   └── eval_celebrity.sh     # Parallel GCD evaluation script
-│
-├── src/                      # Source utilities
-│   ├── clip_score_cal.py     # CLIP Score + FID computation
-│   ├── template.py           # Prompt templates (instance/style/celebrity)
-│   ├── utils.py              # Common utilities (seed, token encoding, image processing)
-│   └── gcd_concept_mapping_v2.json  # Celebrity → GCD label mapping
-│
-├── data/                     # Dataset CSV files
-│   ├── instance.csv
-│   ├── style.csv
-│   ├── celebrity.csv
-│   └── mscoco.csv
-│
-├── celeb-detection-oss/      # (Clone separately) Original GCD codebase
-│   │                           # git clone https://github.com/XXXia-art/celeb-detection-oss.git
-│   ├── examples/inference.py # Single-image GCD inference
-│   ├── requirements_cpu.txt  # GCD environment (CPU)
-│   └── requirements_gpu.txt  # GCD environment (GPU)
-│
-├── cache/                    # Model weights cache
-├── logs/                     # Training checkpoints and sampled images
-└── eval_results/             # Evaluation CSV outputs
-```
+## Default Hyperparameters
+
+The following hyperparameters are shared across all methods (overridable via environment variables when calling `scripts/train.sh`):
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `params` | `V` | Edited projection: `V` = to_v, `K` = to_k, `KV` = to_k + to_v |
+| `threshold` | `1e-1` | SVD energy threshold for constructing retain projection matrix |
+| `retain_scale` | `1.0` | Scaling factor for retain concept loss |
+| `seed` | `0` | Random seed for reproducibility |
+| `dtype` | `float32` | Model weight dtype |
+
+**Method-specific extra parameters:**
+
+| Parameter | Default | Methods | Description |
+|-----------|---------|---------|-------------|
+| `delta_coef` | `0.90` | Alpha_delta, Alpha_delta_v2 | DeltaEdit update coefficient |
+| `eta` | `1.0` | Alpha_delta, Alpha_delta_v2 | History noise threshold multiplier |
+
+**Dataset-specific anchors:**
+
+| Dataset | Anchor | Usage |
+|---------|--------|-------|
+| Instance | `" "` (space) | Null anchor for instance concepts |
+| Style | `"art"` | Art-style anchor for style concepts |
+| Celebrity | `"person"` | Person anchor for celebrity concepts |

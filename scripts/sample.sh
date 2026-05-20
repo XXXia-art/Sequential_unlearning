@@ -19,7 +19,7 @@ set -euo pipefail
 #   bash scripts/sample.sh speed style retain edit 0,1,2,3
 #   bash scripts/sample.sh alpha_delta_v2 celebrity all edit 0,1,2,3
 #   bash scripts/sample.sh speed coco coco edit 0
-#   bash scripts/sample.sh alphaedit instance target original 0,1
+#   bash scripts/sample.sh alphaedit instance all original 0,1
 #
 # Advanced:
 #   # Use a specific step

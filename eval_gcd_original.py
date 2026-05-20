@@ -289,7 +289,7 @@ def evaluate_method(method, classifier, df, edit_root, output_dir):
 def main():
     parser = argparse.ArgumentParser(description='Evaluate celebrity erasure with original GCD')
     parser.add_argument('--method', type=str, required=True,
-                        choices=['alpha_delta', 'alpha_delta_v2', 'speed', 'uce', 'rece'],
+                        choices=['alpha_delta', 'alpha_delta_v2', 'speed', 'alphaedit'],
                         help='Method to evaluate')
     parser.add_argument('--erase_type', type=str, default='celebrity',
                         help='Erase type sub-directory name')
@@ -308,11 +308,10 @@ def main():
     args = parser.parse_args()
 
     method_dir_map = {
-        'alpha_delta': 'Alpha_delta',
-        'alpha_delta_v2': 'Alpha_delta_v2',
-        'speed': 'Speed_2step',
-        'uce': 'UCE_2step',
-        'rece': 'RECE_2step',
+        'alphaedit': 'alphaedit',
+        'alpha_delta': 'alpha_delta',
+        'alpha_delta_v2': 'alpha_delta_v2',
+        'speed': 'speed',
     }
     method_dir = method_dir_map[args.method]
 

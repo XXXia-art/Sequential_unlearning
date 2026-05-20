@@ -2,51 +2,106 @@
 set -euo pipefail
 
 # =============================================================================
-# Parallel GCD Original Evaluation for Celebrity_v2
+# Unified GCD Celebrity Evaluation Script
 # =============================================================================
-# Uses the ORIGINAL celeb-detection-oss codebase:
-#   - TF 1.x MTCNN (CPU, because RTX 4090 doesn't support CUDA 10.0)
-#   - PyTorch ResNet50 + GMM clustering (GPU)
-#
-# CRITICAL: Run this script inside the project root directory.
-# Each method gets its own GPU for PyTorch; TF MTCNN shares CPU cores.
-#
 # Usage:
-#   bash run_gcd_original_eval.sh
+#   bash scripts/eval_celebrity.sh <method> <step> <gpus>
+#
+# Parameters:
+#   method : alphaedit | speed | alpha_delta | alpha_delta_v2 | all
+#   step   : step directory name, e.g., step_100 (default: step_100)
+#   gpus   : comma-separated GPU ids, e.g., 0,1,2,3
+#
+# Examples:
+#   # Single method on GPU 0
+#   bash scripts/eval_celebrity.sh alpha_delta step_100 0
+#
+#   # All methods in parallel (one per GPU)
+#   bash scripts/eval_celebrity.sh all step_100 0,1,2,3
+#
+# Advanced:
+#   # Override default method list when using 'all'
+#   GCD_METHODS="alpha_delta speed" bash scripts/eval_celebrity.sh all step_100 0,1
+#
+#   # Use a specific Python binary
+#   GCD_PYTHON=/opt/conda/envs/gcd_tf1/bin/python bash scripts/eval_celebrity.sh ...
 # =============================================================================
 
-PROJECT_DIR="/data/coding/Instance_log"
-cd "$PROJECT_DIR"
+METHOD="${1:?Usage: $0 <method> <step> <gpus>}"
+STEP="${2:-step_100}"
+GPUS="${3:?Usage: $0 <method> <step> <gpus>}"
 
-PYTHON="/data/miniconda/envs/gcd_tf1/bin/python"
+# ---------------------------------------------------------------------------
+# 1. Resolve Python in gcd_tf1 environment
+# ---------------------------------------------------------------------------
+PYTHON="${GCD_PYTHON:-}"
+if [ -z "$PYTHON" ]; then
+    if command -v conda &> /dev/null; then
+        PYTHON="$(conda run -n gcd_tf1 which python 2>/dev/null || true)"
+    fi
+    if [ -z "$PYTHON" ] || [ ! -x "$PYTHON" ]; then
+        PYTHON="$(which python3 2>/dev/null || which python)"
+    fi
+fi
+
+echo "[CONFIG] Python: $PYTHON"
+$PYTHON --version
+
+# ---------------------------------------------------------------------------
+# 2. Build method list
+# ---------------------------------------------------------------------------
+ALL_METHODS=(alphaedit speed alpha_delta alpha_delta_v2)
+
+if [ "$METHOD" == "all" ]; then
+    if [ -n "${GCD_METHODS:-}" ]; then
+        IFS=' ' read -ra METHODS <<< "$GCD_METHODS"
+    else
+        METHODS=("${ALL_METHODS[@]}")
+    fi
+else
+    METHODS=("$METHOD")
+fi
+
+# ---------------------------------------------------------------------------
+# 3. Validate GPUs
+# ---------------------------------------------------------------------------
+IFS=',' read -ra GPU_LIST <<< "$GPUS"
+NUM_GPUS=${#GPU_LIST[@]}
+NUM_METHODS=${#METHODS[@]}
+
+if [ "$NUM_METHODS" -gt "$NUM_GPUS" ]; then
+    echo "[ERROR] $NUM_METHODS methods but only $NUM_GPUS GPUs provided."
+    echo "        Provide more GPUs or set GCD_METHODS to a subset."
+    exit 1
+fi
+
+# ---------------------------------------------------------------------------
+# 4. Launch evaluation jobs
+# ---------------------------------------------------------------------------
 EVAL_SCRIPT="eval_gcd_original.py"
 OUTPUT_DIR="eval_results/gcd_original"
-STEP="step_100"
 ERASE_TYPE="celebrity"
 CSV="data/celebrity.csv"
-
-METHODS=("alpha_delta" "speed")
-GPUS=(0 1 2 3)
 
 mkdir -p "$OUTPUT_DIR"
 
 echo "=============================================================================="
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] GCD Original Evaluation Started"
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] GCD Evaluation Started"
 echo "   Methods: ${METHODS[*]}"
-echo "   GPUs:    ${GPUS[*]} (PyTorch ResNet)"
-echo "   TF MTCNN: CPU only (RTX 4090 incompatible with CUDA 10.0)"
+echo "   Step:    $STEP"
+echo "   GPUs:    ${GPU_LIST[*]} (${NUM_GPUS} total)"
 echo "   Output:  $OUTPUT_DIR"
 echo "=============================================================================="
 
 PIDS=()
 for i in "${!METHODS[@]}"; do
-    method="${METHODS[$i]}"
-    gpu="${GPUS[$i]}"
-    logfile="$OUTPUT_DIR/eval_${method}_gpu${gpu}.log"
+    m="${METHODS[$i]}"
+    gpu="${GPU_LIST[$i]}"
+    logfile="$OUTPUT_DIR/eval_${m}_${STEP}_gpu${gpu}.log"
 
-    echo "[LAUNCH] $method -> GPU $gpu + CPU TF  (log: $logfile)"
+    echo "[LAUNCH] $m -> GPU $gpu  (log: $logfile)"
     CUDA_VISIBLE_DEVICES=$gpu $PYTHON $EVAL_SCRIPT \
-        --method "$method" \
+        --method "$m" \
         --erase_type "$ERASE_TYPE" \
         --step_name "$STEP" \
         --data_csv "$CSV" \
@@ -58,11 +113,7 @@ for i in "${!METHODS[@]}"; do
 done
 
 echo ""
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] All ${#PIDS[@]} jobs launched."
-echo "  PIDs: ${PIDS[*]}"
-echo "  Waiting for completion..."
-echo ""
-
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] ${#PIDS[@]} job(s) launched. Waiting..."
 wait "${PIDS[@]}"
 
 echo ""
@@ -70,16 +121,16 @@ echo "==========================================================================
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] ALL EVALUATION JOBS COMPLETE"
 echo "=============================================================================="
 
-# -----------------------------------------------------------------------------
-# Merge summaries
-# -----------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# 5. Merge summaries
+# ---------------------------------------------------------------------------
 echo ""
 echo "Merging summaries..."
 $PYTHON << 'PYEOF'
 import os, glob, pandas as pd
 
 outdir = "eval_results/gcd_original"
-methods = ["alpha_delta", "speed"]
+methods = ["alphaedit", "speed", "alpha_delta", "alpha_delta_v2"]
 
 all_rows = []
 for method in methods:
