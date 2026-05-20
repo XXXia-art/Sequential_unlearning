@@ -350,11 +350,17 @@ if __name__ == "__main__":
 
     # ---- SEQUENTIAL LOAD POINT ----
     if args.edit_ckpt and os.path.exists(args.edit_ckpt):
-        weight_path = os.path.join(args.edit_ckpt, "weight.pt")
-        m_path = os.path.join(args.edit_ckpt, "m_hist.pt")
-        v_path = os.path.join(args.edit_ckpt, "v_hist.pt")
-
-        print(f"[INFO] Loading previous edit folder: {args.edit_ckpt}")
+        if os.path.isfile(args.edit_ckpt):
+            weight_path = args.edit_ckpt
+            ckpt_dir = os.path.dirname(args.edit_ckpt)
+            m_path = os.path.join(ckpt_dir, "m_hist.pt")
+            v_path = os.path.join(ckpt_dir, "v_hist.pt")
+            print(f"[INFO] Loading previous edit file: {args.edit_ckpt}")
+        else:
+            weight_path = os.path.join(args.edit_ckpt, "weight.pt")
+            m_path = os.path.join(args.edit_ckpt, "m_hist.pt")
+            v_path = os.path.join(args.edit_ckpt, "v_hist.pt")
+            print(f"[INFO] Loading previous edit folder: {args.edit_ckpt}")
 
         if os.path.exists(weight_path):
             prev_weight = torch.load(weight_path, map_location="cpu")
