@@ -53,10 +53,10 @@ class Generate_Dataset(Dataset):
 
 class CLIP_Score():
     def __init__(self, version='openai/clip-vit-large-patch14', device='cuda' if torch.cuda.is_available() else 'cpu'):
-        local_model_path = "/data/coding/model_weight/CLIP/models--openai--clip-vit-large-patch14"
-        self.model = CLIPModel.from_pretrained(local_model_path, local_files_only=True)
-        self.processor = CLIPProcessor.from_pretrained(local_model_path, local_files_only=True)
-        self.tokenizer = CLIPTokenizer.from_pretrained(local_model_path, local_files_only=True)
+        model_path = os.environ.get("CLIP_MODEL_PATH", version)
+        self.model = CLIPModel.from_pretrained(model_path)
+        self.processor = CLIPProcessor.from_pretrained(model_path)
+        self.tokenizer = CLIPTokenizer.from_pretrained(model_path)
         self.device = device
         self.model = self.model.to(self.device)
     
