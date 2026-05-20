@@ -27,9 +27,9 @@ set -euo pipefail
 #   GCD_PYTHON=/opt/conda/envs/gcd_tf1/bin/python bash scripts/eval_celebrity.sh ...
 # =============================================================================
 
-METHOD="${1:?Usage: $0 <method> <step> <gpus>}"
-STEP="${2:-step_100}"
-GPUS="${3:?Usage: $0 <method> <step> <gpus>}"
+METHOD="${1:?Usage: $0 <method> <gpus>}"
+GPUS="${2:?Usage: $0 <method> <gpus>}"
+STEP="${STEP:-step_100}"
 
 # ---------------------------------------------------------------------------
 # 1. Resolve Python in gcd_tf1 environment

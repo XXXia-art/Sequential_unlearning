@@ -43,11 +43,12 @@ pip install -r requirements.txt
 ### 1. Concept Erasure (Editing)
 
 Edit the UNet to erase target concepts while preserving retain concepts:
-|  | optional parameters |
-|---------|------|
+|  | optional parameters | description |
+|---------|------|----------|
 | **method** | `alphaedit, alpha_delta, alpha_delta_v2, speed` | 
 | **dataset** | `instance, style, celebrity` | 
-| **group_size** | `2,1` |
+| **group_size** | `2,1` | for train |
+| **split** | `all, target, retain` | for sample and eval|
 | **gpu** | `/` | 
 
 
@@ -119,12 +120,6 @@ data/pretrain/{dataset}/{step}/{concept}/original/ # Original model generation (
 # Instance retain (id 201-600)
 bash scripts/eval.sh alpha_delta instance retain 0
 
-# Instance target (id 1-200)
-bash scripts/eval.sh speed instance target 0
-
-# Style retain
-bash scripts/eval.sh alpha_delta_v2 style retain 1
-
 # COCO
 bash scripts/eval.sh speed coco coco 0
 
@@ -195,17 +190,22 @@ Run `eval_gcd_original.py` inside the `gcd_tf1` environment. It will:
 4. Output per-concept and summary CSVs to `eval_results/gcd_original/`.
 
 ```bash
-# Single method (equivalent to the direct python call above)
-bash scripts/eval_celebrity.sh alpha_delta step_100 0
+# Single method on GPU 0 (default step_100)
+bash scripts/eval_celebrity.sh alpha_delta 0
 
 # Evaluate another method on GPU 1
-bash scripts/eval_celebrity.sh speed step_100 1
+bash scripts/eval_celebrity.sh speed 1
+
+# Use a specific step
+STEP=step_050 bash scripts/eval_celebrity.sh alpha_delta 0
 ```
 
 Arguments:
 - `method`: `alphaedit` | `speed` | `alpha_delta` | `alpha_delta_v2` | `all`
-- `step`: Step directory to evaluate, e.g., `step_100`
 - `gpus`: Comma-separated GPU ids, e.g., `0` or `0,1,2,3`
+
+Environment variables:
+- `STEP`: Step directory to evaluate, e.g., `step_100` (default: `step_100`)
 
 Metrics:
 - **Acc_e** (erase accuracy): % of target images where the erased celebrity is **still recognized**. Lower is better.
@@ -223,17 +223,20 @@ Results:
 Evaluate all methods in parallel, one per GPU:
 
 ```bash
-bash scripts/eval_celebrity.sh all step_100 0,1,2,3
+bash scripts/eval_celebrity.sh all 0,1,2,3
 ```
 
 Advanced:
 
 ```bash
 # Evaluate only a subset of methods
-GCD_METHODS="alpha_delta speed" bash scripts/eval_celebrity.sh all step_100 0,1
+GCD_METHODS="alpha_delta speed" bash scripts/eval_celebrity.sh all 0,1
+
+# Use a specific step for all parallel jobs
+STEP=step_050 bash scripts/eval_celebrity.sh all 0,1,2,3
 
 # Use a specific Python binary (if conda auto-detection fails)
-GCD_PYTHON=/opt/conda/envs/gcd_tf1/bin/python bash scripts/eval_celebrity.sh all step_100 0,1,2,3
+GCD_PYTHON=/opt/conda/envs/gcd_tf1/bin/python bash scripts/eval_celebrity.sh all 0,1,2,3
 ```
 
 ## Evaluation Metrics
