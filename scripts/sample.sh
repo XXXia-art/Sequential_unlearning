@@ -236,13 +236,20 @@ if [ "$DATASET" == "coco" ]; then
     SD_CKPT_ARG=(--sd_ckpt "$SD_CKPT")
   fi
 
+  # original baseline does not need step suffix
+  if [ "$MODE" == "original" ]; then
+    COCO_SAVE_ROOT="$SAVE_ROOT"
+  else
+    COCO_SAVE_ROOT="${SAVE_ROOT}/${step_name}"
+  fi
+
   CUDA_VISIBLE_DEVICES="$gpu" "$PYTHON_BIN" "$SAMPLER" \
     --erase_type "$ERASE_TYPE" \
     --contents "coco" \
     --mode "$MODE" \
     --num_samples "$NUM_SAMPLES" \
     --batch_size "$BATCH_SIZE" \
-    --save_root "${SAVE_ROOT}/${step_name}" \
+    --save_root "$COCO_SAVE_ROOT" \
     --gpu 0 \
     "${edit_args[@]}" \
     "${SD_CKPT_ARG[@]}" \
@@ -302,9 +309,15 @@ PY
       SD_CKPT_ARG=(--sd_ckpt "$SD_CKPT")
     fi
 
+    # original baseline does not need step-level sub-directory
+    TARGET_CONCEPT_ARG=()
+    if [ "$MODE" == "edit" ]; then
+      TARGET_CONCEPT_ARG=(--target_concept "$step_name")
+    fi
+
     CUDA_VISIBLE_DEVICES="$gpu" "$PYTHON_BIN" "$SAMPLER" \
       --erase_type "$ERASE_TYPE" \
-      --target_concept "$step_name" \
+      "${TARGET_CONCEPT_ARG[@]}" \
       --contents "$chunk" \
       --mode "$MODE" \
       --num_samples "$NUM_SAMPLES" \
